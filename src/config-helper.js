@@ -11,9 +11,9 @@ createEmit = (args) => {
     resolveOperation(args, emmiter.emmitFiles);
 }
 
-initWatcher = (sourceFolder, destFolder, lang) =>{
-    watcher.buildCache(sourceFolder);
-    watcher.watchFiles(sourceFolder, destFolder, lang);
+initWatcher = (config) =>{
+    watcher.buildCache(config);
+    watcher.watchFiles(config);
 }
 
 resolveOperation = (args, func) =>{
