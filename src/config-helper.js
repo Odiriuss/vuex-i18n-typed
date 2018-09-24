@@ -17,15 +17,15 @@ initWatcher = (sourceFolder, destFolder, lang) =>{
 }
 
 resolveOperation = (args, func) =>{
-    let sourceFolder = __dirname + args.source;
-    let destFolder = __dirname + args.destination;
+    args.source = __dirname + args.source;
+    args.destination = __dirname + args.destination;
 
-    if(!fs.existsSync(sourceFolder)){
+    if(!fs.existsSync(args.source)){
         console.log("Source folder doesn't exist!");
         yargs.showHelp();
     }
     else{
-        func(sourceFolder, destFolder, args.lang);
+        func(args);
     }
 }
 
