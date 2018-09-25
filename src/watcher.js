@@ -7,10 +7,10 @@ let md5Cache = {};
 let fsWait = false;
 
 //Build initial cache
-buildCache = (watchFolder) => {
-    fs.readdir(watchFolder, (err, files) => {
+buildCache = (config) => {
+    fs.readdir(config.source, (err, files) => {
         files.forEach(filename => {
-            var file = fs.readFileSync(`${watchFolder}/${filename}`, "utf8");
+            var file = fs.readFileSync(`${config.source}/${filename}`, "utf8");
             const fileMd5 = md5(file);
             md5Cache[filename] = fileMd5;
         });
@@ -18,15 +18,15 @@ buildCache = (watchFolder) => {
 }
 
 //Watch for file changes
-watchFiles = (watchFolder, destFolder, lang) => {
-    fs.watch(watchFolder, (event, filename) => {
+watchFiles = (config) => {
+    fs.watch(config.source, (event, filename) => {
         if (filename) {
             if (fsWait) return;
             fsWait = setTimeout(() => {
                 fsWait = false;
             }, 100);
 
-            var file = fs.readFileSync(`${watchFolder}/${filename}`, "utf8");
+            var file = fs.readFileSync(`${config.source}/${filename}`, "utf8");
             const fileMd5 = md5(file);
             if (fileMd5 === md5Cache[filename]) {
                 return;
@@ -34,8 +34,8 @@ watchFiles = (watchFolder, destFolder, lang) => {
             md5Cache[filename] = fileMd5;
             console.log(`${filename} file Changed`);
     
-            let result = ft.transformFile(JSON.parse(file), filename, lang);
-            fm.saveResult(result, destFolder);
+            let result = ft.transformFile(JSON.parse(file), filename, config.lang);
+            fm.saveResult(result, config.destination);
         }
     });
 }
