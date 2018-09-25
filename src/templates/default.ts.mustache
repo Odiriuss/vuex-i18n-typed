@@ -1,0 +1,10 @@
+import { Vue } from 'vue-property-decorator';
+
+export class {{ className }} {
+{{#values}}
+    /** En translation: {{Value}} */
+    get {{Key}}(): string {
+        return Vue.i18n.translate('{{Key}}', Vue.i18n.locale());
+    }
+{{/values}}
+}

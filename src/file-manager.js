@@ -21,4 +21,16 @@ saveFile = (path, content) =>{
     }); 
 }
 
-module.exports = {saveResult, saveFile};
+saveGeneratedFiles = (config) =>{
+    config.files.forEach(generatedFile => {
+        console.log(generatedFile);
+
+        fs.writeFileSync(`${config.destFolder}/${generatedFile.fileName}`, generatedFile.content, function(err) {
+            if(err) {
+                return console.log(err);
+            }
+        }); 
+    });
+}
+
+module.exports = {saveResult, saveFile, saveGeneratedFiles};

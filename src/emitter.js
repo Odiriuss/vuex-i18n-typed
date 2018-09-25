@@ -1,6 +1,7 @@
 const fs = require('fs');
 const ft = require('./file-transformer');
 const fm = require('./file-manager');
+const fileGenerator = require('./file-generator');
 
 emmitFiles = (config) => {
     fs.readdir(config.source, function(err, filenames) {
@@ -15,8 +16,17 @@ emmitFiles = (config) => {
             return;
           }
 
-          let result = ft.transformFile(JSON.parse(content), filename, config.lang);
-          fm.saveResult(result, config.destination);
+          // let result = ft.transformFile(JSON.parse(content), filename, config.lang);
+          
+          var generateConfig = {
+            source: config.source,
+            templates: config.templates,
+            data: {values: JSON.parse(content)},
+            className: filename.split('.')[0]
+          };
+
+          let result = fileGenerator.generateFiles(generateConfig);
+          fm.saveGeneratedFiles({files: result, destFolder: config.destination});
           
           console.log(filename);
         });
