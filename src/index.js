@@ -12,7 +12,7 @@ require('yargs') // eslint-disable-line
         describe: 'Destination folder where the .ts files will be emitted.'
       })
   }, (argv) => {
-    configHelper.createEmit(argv);
+    configHelper.startEmit(argv);
   })
   .command('watch <source> <destination>', 'Emit .ts file from the files in the source folder whenever a file in the source folder changes.', (yarg) => {
     yarg
@@ -31,6 +31,11 @@ require('yargs') // eslint-disable-line
     alias: 'l',
     default: 'en',
     describe: 'Sets the language which will trigger the emit of the .ts file.'
+  })
+  .option('templates', {
+    alias: 't',
+    describe: 'Templates to be used for emitting source files.',
+    type: "array"
   })
   .demandCommand(1)
   .help()

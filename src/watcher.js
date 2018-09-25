@@ -1,10 +1,15 @@
-var fm = require('./file-manager');
-var ft = require('./file-transformer');
+const fm = require('./file-manager');
+const ft = require('./file-transformer');
 const fs = require('fs');
 const md5 = require('md5');
 
 let md5Cache = {};
 let fsWait = false;
+
+initWatcher = (config) =>{
+    buildCache(config);
+    watchFiles(config);
+}
 
 //Build initial cache
 buildCache = (config) => {
@@ -40,4 +45,4 @@ watchFiles = (config) => {
     });
 }
 
-module.exports = {buildCache, watchFiles};
+module.exports = {initWatcher, buildCache, watchFiles};

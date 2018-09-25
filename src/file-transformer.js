@@ -1,7 +1,8 @@
 const endOfLine = require('os').EOL;
+const utility = require('./utility');
 
 //Transform file
-transformFile = (fileContent, filename, tsLanguage = 'en') => {
+transformFile = (fileContent, filename, tsLanguage) => {
     var jsonFileContent = {};
     var classConent = "";
     var lang = filename.split('.')[1];
@@ -14,7 +15,7 @@ transformFile = (fileContent, filename, tsLanguage = 'en') => {
             + endOfLine;
     });
 
-    var className = fileNameToTitleCase(filename.split(".")[0]);
+    var className = utility.toTitleCase(filename.split(".")[0]);
     var tsClass = "import { Vue } from 'vue-property-decorator';" + endOfLine + endOfLine
         + `export class ${className} {` + endOfLine + `${classConent}` + "}";
     
@@ -24,11 +25,4 @@ transformFile = (fileContent, filename, tsLanguage = 'en') => {
     return {tsClass, jsonContent, filename, className};
 }
 
-//First letter to uppercase
-fileNameToTitleCase = (str) => {
-    return str.replace(/\w\S*/g, function(txt){
-        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-    });
-}
-
-module.exports = {transformFile, fileNameToTitleCase};
+module.exports = {transformFile};

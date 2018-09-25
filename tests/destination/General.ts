@@ -1,7 +1,7 @@
 import { Vue } from 'vue-property-decorator';
 
 export class General {
-	/** En translation: 30 days en 13 */
+	/** En translation: 30 days en 36 */
 	get _30days(): string {
 		return Vue.i18n.translate('_30days', Vue.i18n.locale());
 	}

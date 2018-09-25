@@ -3,30 +3,31 @@ const emmiter = require('./emitter');
 const fs = require('fs');
 const yargs = require('yargs');
 
-startWatching = (args) => {
-    resolveOperation(args, initWatcher);
+startWatching = (config) => {
+    resolveOperation(config, watcher.initWatcher);
 }
 
-createEmit = (args) => {
-    resolveOperation(args, emmiter.emmitFiles);
+startEmit = (config) => {
+    resolveOperation(config, emmiter.emmitFiles);
 }
 
-initWatcher = (config) =>{
-    watcher.buildCache(config);
-    watcher.watchFiles(config);
+resolveOperation = (config, func) =>{
+    console.log(config);
+    probaTemplate(config);
+    // config.source = __dirname + config.source;
+    // config.destination = __dirname + config.destination;
+
+    // if(!fs.existsSync(config.source)){
+    //     console.log("Source folder doesn't exist!");
+    //     yargs.showHelp();
+    // }
+    // else{
+    //     func(config);
+    // }
 }
 
-resolveOperation = (args, func) =>{
-    args.source = __dirname + args.source;
-    args.destination = __dirname + args.destination;
+probaTemplate = (config) =>{
 
-    if(!fs.existsSync(args.source)){
-        console.log("Source folder doesn't exist!");
-        yargs.showHelp();
-    }
-    else{
-        func(args);
-    }
 }
 
-module.exports = {startWatching, createEmit};
+module.exports = {startWatching, startEmit};
