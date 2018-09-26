@@ -1,5 +1,4 @@
 const fs = require('fs');
-const ft = require('./file-transformer');
 const fm = require('./file-manager');
 const fileGenerator = require('./file-generator');
 
@@ -16,13 +15,12 @@ emmitFiles = (config) => {
             return;
           }
 
-          // let result = ft.transformFile(JSON.parse(content), filename, config.lang);
-          
           var generateConfig = {
             source: config.source,
             templates: config.templates,
-            data: {values: JSON.parse(content)},
-            className: filename.split('.')[0]
+            transforms: config.transforms,
+            data: JSON.parse(content),
+            filename: filename
           };
 
           let result = fileGenerator.generateFiles(generateConfig);

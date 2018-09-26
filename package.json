@@ -9,9 +9,10 @@
   "author": "Tomislav Sulentic",
   "license": "ISC",
   "dependencies": {
+    "handlebars": "^4.0.12",
     "log-timestamp": "^0.2.1",
     "md5": "^2.2.1",
-    "mustache": "^3.0.0",
+    "node-json-transform": "^1.0.17",
     "yargs": "^12.0.2"
   }
 }

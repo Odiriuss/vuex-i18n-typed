@@ -37,6 +37,11 @@ require('yargs') // eslint-disable-line
     describe: 'Templates to be used for emitting source files.',
     type: "array"
   })
+  .option('transforms', {
+    alias: 'tf',
+    describe: 'Transforms folder to be used for transforming source files.',
+    type: "array"
+  })
   .demandCommand(1)
   .help()
   .showHelpOnFail(false, 'Whoops, something went wrong! run with --help')

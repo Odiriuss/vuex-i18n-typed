@@ -1,5 +1,6 @@
 const endOfLine = require('os').EOL;
 const utility = require('./utility');
+var dataTransform = require("node-json-transform").DataTransform;
 
 //Transform file
 transformFile = (fileContent, filename, tsLanguage) => {
@@ -25,4 +26,15 @@ transformFile = (fileContent, filename, tsLanguage) => {
     return {tsClass, jsonContent, filename, className};
 }
 
-module.exports = {transformFile};
+function transformData(data, map){
+    var dataObject = {};
+    if(Array.isArray(data))
+        dataObject = {translations:data};
+    else
+        dataObject = data;
+
+    var transformer = dataTransform(dataObject, map);
+    return transformer.transform();
+}
+
+module.exports = {transformFile, transformData};

@@ -1,12 +1,12 @@
 import { Vue } from 'vue-property-decorator';
 
-export class  {
-    /** En translation: 30 days en 152 */
+export class General {
+    /** En translation: _30days */
     get _30days(): string {
-        return Vue.i18n.translate('_30days', Vue.i18n.locale());
+        return Vue.i18n.translate('30 days en 18', Vue.i18n.locale());
     }
-    /** En translation: 7 days en */
+    /** En translation: _7days */
     get _7days(): string {
-        return Vue.i18n.translate('_7days', Vue.i18n.locale());
+        return Vue.i18n.translate('7 days en', Vue.i18n.locale());
     }
 }
