@@ -27,7 +27,6 @@ saveGeneratedFiles = (config) =>{
             fs.mkdirSync(generatedFile.folder);
         }
 
-        // console.log(generatedFile.fullPath);
         fs.writeFileSync(`${generatedFile.fullPath}`, generatedFile.content, function(err) {
             if(err) {
                 return console.log(err);

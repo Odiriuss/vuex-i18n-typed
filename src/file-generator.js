@@ -17,7 +17,7 @@ function generateFiles(config) {
         let nameComponents = templateLocation.split(".");
         //Last one is handlebars
         let fileExtension = nameComponents[nameComponents.length - 2];
-        var isClassTemplate = config.classes.includes(fileExtension);
+        var isClassTemplate = config.classes && config.classes.includes(fileExtension);
 
         // if(config.lang !== config.filename.split('.')[1] && isClassTemplate){
         //     // break;
@@ -26,17 +26,19 @@ function generateFiles(config) {
         var templateSource = fs.readFileSync(`${templateLocation}`, "utf8");
         var template = handlebars.compile(templateSource);
 
-        var extensionTransforms = config.transforms.filter(x=> x.split('.')[1] == fileExtension);
         var emmitData = config.data;
-        if(extensionTransforms){
-            extensionTransforms.forEach(function(transformPath){
-                var modulePath = "." + transformPath.replace('\\', '/');
-                var map = require(modulePath).map;
-                emmitData = transformer.transformData(config.data, map);
-                //NOTE: Add for each emmit
-            });
+        if(config.transforms){
+            var extensionTransforms = config.transforms.filter(x=> x.split('.')[1] == fileExtension);
+            if(extensionTransforms){
+                extensionTransforms.forEach(function(transformPath){
+                    var modulePath = "." + transformPath.replace('\\', '/');
+                    var map = require(modulePath).map;
+                    emmitData = transformer.transformData(config.data, map);
+                    //NOTE: Add for each emmit
+                });
+            }
         }
-
+        
         var templateData = {};
         var filename = '';
         if(isClassTemplate){

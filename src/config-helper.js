@@ -40,14 +40,13 @@ function prepareDestinations(extensionDestinations){
 
 function prepareFiles(fileFolder, isTransforms = false) {
     var result = [];
+    
     if (fileFolder) {
         var filenames = fs.readdirSync(`${__dirname}\\${fileFolder}`);
         filenames.forEach(function (filename) {
-            var data = isTransforms === true ? 
-                    `${fileFolder}\\${filename}`:
-                    `${__dirname}${fileFolder}\\${filename}`;
-
-            result.push(data);
+            result.push(isTransforms === true ? 
+                `${fileFolder}\\${filename}`:
+                `${__dirname}${fileFolder}\\${filename}`);
         });
     }
     
