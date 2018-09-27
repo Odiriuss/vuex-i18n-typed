@@ -23,7 +23,12 @@ saveFile = (path, content) =>{
 
 saveGeneratedFiles = (config) =>{
     config.files.forEach(generatedFile => {
-        fs.writeFileSync(`${config.destFolder}/${generatedFile.fileName}`, generatedFile.content, function(err) {
+        if (!fs.existsSync(generatedFile.folder)) {
+            fs.mkdirSync(generatedFile.folder);
+        }
+
+        // console.log(generatedFile.fullPath);
+        fs.writeFileSync(`${generatedFile.fullPath}`, generatedFile.content, function(err) {
             if(err) {
                 return console.log(err);
             }

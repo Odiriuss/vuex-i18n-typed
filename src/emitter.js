@@ -15,21 +15,16 @@ emmitFiles = (config) => {
             return;
           }
 
-          var generateConfig = {
-            source: config.source,
-            templates: config.templates,
-            transforms: config.transforms,
-            data: JSON.parse(content),
-            filename: filename
-          };
+          config.filename = filename;
+          config.data = JSON.parse(content);
 
-          let result = fileGenerator.generateFiles(generateConfig);
+          let result = fileGenerator.generateFiles(config);
           fm.saveGeneratedFiles({files: result, destFolder: config.destination});
           
           console.log(filename);
         });
       });
     });
-  }
+}
 
 module.exports = {emmitFiles};

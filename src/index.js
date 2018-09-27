@@ -35,11 +35,21 @@ require('yargs') // eslint-disable-line
   .option('templates', {
     alias: 't',
     describe: 'Templates to be used for emitting source files.',
-    type: "array"
+    type: "string"
   })
   .option('transforms', {
     alias: 'tf',
     describe: 'Transforms folder to be used for transforming source files.',
+    type: "string"
+  })
+  .option('classes', {
+    alias: 'c',
+    describe: 'File extension array that contains extensions that should be rendered with class names.',
+    type: "array"
+  })
+  .option('extension-destinations', {
+    alias: 'ed',
+    describe: 'Sets the destination for each extension.',
     type: "array"
   })
   .demandCommand(1)

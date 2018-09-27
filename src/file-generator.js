@@ -15,43 +15,51 @@ function generateFiles(config) {
 
     config.templates.forEach(templateLocation => {
         let nameComponents = templateLocation.split(".");
-        //Last one is mustache
+        //Last one is handlebars
         let fileExtension = nameComponents[nameComponents.length - 2];
+        var isClassTemplate = config.classes.includes(fileExtension);
 
-        var templateSource = fs.readFileSync(`${__dirname}/${templateLocation}`, "utf8");
+        // if(config.lang !== config.filename.split('.')[1] && isClassTemplate){
+        //     // break;
+        // }
+
+        var templateSource = fs.readFileSync(`${templateLocation}`, "utf8");
         var template = handlebars.compile(templateSource);
 
         var extensionTransforms = config.transforms.filter(x=> x.split('.')[1] == fileExtension);
+        var emmitData = config.data;
         if(extensionTransforms){
             extensionTransforms.forEach(function(transformPath){
                 var modulePath = "." + transformPath.replace('\\', '/');
                 var map = require(modulePath).map;
-                config.data = transformer.transformData(config.data, map);
-                //Add for each emmit
+                emmitData = transformer.transformData(config.data, map);
+                //NOTE: Add for each emmit
             });
         }
 
-        //Add check for extension
         var templateData = {};
-        var className = config.filename.split('.')[0];
         var filename = '';
-        if(fileExtension === 'ts'){
-            templateData = {data: config.data, className: utility.toTitleCase(className)};
-            filename = `${utility.toTitleCase(className)}.${fileExtension}`;
+        if(isClassTemplate){
+            var className = utility.toTitleCase(config.filename.split('.')[0]);
+            templateData = {data: emmitData, className: className};
+            filename = `${className}.${fileExtension}`;
         }
         else{
-            templateData = config.data;
+            templateData = emmitData;
             filename = `${config.filename}`;
         }
-        
+
+        var destination = config.extensionDestinations.find(x=> x.extension === fileExtension);
         var result = {
             content: template(templateData),
-            fileName: filename
+            folder: destination ? `${destination.path}` : `${config.destination}`,
+            fullPath: destination ? `${destination.path}\\${filename}` : `${config.destination}\\${filename}`
         };
 
         rendered.push(result);
     });
 
+    // console.log(rendered);
     return rendered;
 }
 
