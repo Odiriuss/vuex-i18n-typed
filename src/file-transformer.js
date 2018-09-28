@@ -1,40 +1,53 @@
-const endOfLine = require('os').EOL;
-const utility = require('./utility');
 var dataTransform = require("node-json-transform").DataTransform;
 
-//Transform file
-transformFile = (fileContent, filename, tsLanguage) => {
-    var jsonFileContent = {};
-    var classConent = "";
-    var lang = filename.split('.')[1];
+/**
+ * Data transformer
+ * @name transformData
+ * @description transform data with the given map
+ * @param {Object} data - json data that will be used in the transformations
+ * @param {Object} map - map object that will be passed to the data transform function 
+ * @return {string} - transformed data
+ */
+function transformData(data, map) {
+    let dataObject = {};
 
-    fileContent.forEach(function (element) {
-        jsonFileContent[element.Key] = element.Value;
-        var propertyComment = "\t" + `/** En translation: ${element.Value} */` + endOfLine;
-        classConent += propertyComment + "\t" + `get ${element.Key}(): string {` + endOfLine 
-            + "\t" + "\t" + "return Vue.i18n.translate(" + `'${element.Key}'` + ", Vue.i18n.locale());" + endOfLine + "\t" + "}" 
-            + endOfLine;
-    });
+    if (Array.isArray(data)) dataObject = {
+        translations: data
+    };
+    else dataObject = data;
 
-    var className = utility.toTitleCase(filename.split(".")[0]);
-    var tsClass = "import { Vue } from 'vue-property-decorator';" + endOfLine + endOfLine
-        + `export class ${className} {` + endOfLine + `${classConent}` + "}";
-    
-    let jsonContent = JSON.stringify(jsonFileContent, null, "\t");
-
-    if(lang !== tsLanguage) tsClass = null;
-    return {tsClass, jsonContent, filename, className};
+    return dataTransform(dataObject, map).transform();
 }
 
-function transformData(data, map){
-    var dataObject = {};
-    if(Array.isArray(data))
-        dataObject = {translations:data};
-    else
-        dataObject = data;
+/**
+ * Tranformation handler
+ * @name handleTransformations
+ * @description loops thorugh all the transformations and creates transforms based on that
+ * @param {Object} config - 
+ *          {Object} data - data to be transformed 
+ *          {Array of string} transforms - transform script locations
+ * @param {string} fileExtension - which extensions to use in transforms 
+ * @return {string} - transformed data
+ */
+function handleTransformations(config, fileExtension) {
+    let emmitData = config.data;
 
-    var transformer = dataTransform(dataObject, map);
-    return transformer.transform();
+    if (config.transforms) {
+        let extensionTransforms = config.transforms.filter(x => x.split('.')[1] == fileExtension);
+        if (extensionTransforms) {
+            extensionTransforms.forEach(function (transformPath) {
+                let modulePath = "." + transformPath.replace('\\', '/');
+                let map = require(modulePath).map;
+                emmitData = transformData(config.data, map);
+                //NOTE: Add for each emmit
+            });
+        }
+    }
+
+    return emmitData;
 }
 
-module.exports = {transformFile, transformData};
+module.exports = {
+    transformData,
+    handleTransformations
+};

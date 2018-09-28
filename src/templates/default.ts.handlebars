@@ -1,11 +1,11 @@
-import { Vue } from 'vue-property-decorator';
+import { Vue } from 'vue';
 
 export class {{className}} {
 {{#each data}}
 {{#each .}}
-    /** En translation: {{@key}} */
+    /** En translation: {{this}} */
     get {{@key}}(): string {
-        return Vue.i18n.translate('{{this}}', Vue.i18n.locale());
+        return Vue.i18n.translate('{{@key}}', Vue.i18n.locale());
     }
 {{/each}}
 {{/each}}

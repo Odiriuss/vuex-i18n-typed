@@ -1,7 +1,7 @@
 require('log-timestamp');
 const configHelper = require('./config-helper');
 
-require('yargs') // eslint-disable-line
+require('yargs')
   .usage('Usage: $0 <command> <source> <destination> [options]')
   .command('emit <source> <destination>', 'Emit .ts files from the files in the source folder.', (yarg) => {
     yarg
@@ -10,7 +10,7 @@ require('yargs') // eslint-disable-line
       })
       .positional('destination', {
         describe: 'Destination folder where the .ts files will be emitted.'
-      })
+      });
   }, (argv) => {
     configHelper.startEmit(argv);
   })
@@ -23,9 +23,13 @@ require('yargs') // eslint-disable-line
       .positional('destination', {
         describe: 'Destination folder where the .ts files will be emitted.',
         type: "string"
-      })
+      });
   }, (argv) => {
     configHelper.startWatching(argv);
+  })
+  .option('log', {
+    default: '\\..\\logs',
+    describe: 'Sets the log folder location.'
   })
   .option('lang', {
     alias: 'l',
