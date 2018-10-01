@@ -1,7 +1,7 @@
 {
   "name": "vuex-i18n-typed",
-  "version": "1.0.0",
-  "description": "Creates Typescript classes based on translation files",
+  "version": "1.1.0",
+  "description": "Creates output files based on input json files.",
   "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
