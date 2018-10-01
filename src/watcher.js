@@ -63,27 +63,24 @@ function buildCache(config) {
 function watchFiles(config) {
     fileSystem.watch(config.source, (event, filename) => {
         if (filename) {
-            if (fsWait) return;
-            fsWait = setTimeout(() => {
-                fsWait = false;
-            }, 100);
-
             let content = fileSystem.readFileSync(`${config.source}/${filename}`, "utf8");
-            const fileMd5 = md5(content);
-            if (fileMd5 === md5Cache[filename]) return;
+            if (content) {
+                const fileMd5 = md5(content);
+                if (fileMd5 === md5Cache[filename]) return;
 
-            md5Cache[filename] = fileMd5;
-            console.log(`File changed: ${filename}!`);
+                md5Cache[filename] = fileMd5;
+                console.log(`File changed: ${filename}!`);
 
-            try {
-                config.filename = filename;
-                config.data = JSON.parse(content);
+                try {
+                    config.filename = filename;
+                    config.data = JSON.parse(content);
 
-                let result = fileGenerator.generateFiles(config);
-                fileManager.saveGeneratedFiles(result);
-                fileManager.displaySavedFiles(result, filename);
-            } catch (error) {
-                errorHandler.handleError(error);
+                    let result = fileGenerator.generateFiles(config);
+                    fileManager.saveGeneratedFiles(result);
+                    fileManager.displaySavedFiles(result, filename);
+                } catch (error) {
+                    errorHandler.handleError(error);
+                }
             }
         }
     });

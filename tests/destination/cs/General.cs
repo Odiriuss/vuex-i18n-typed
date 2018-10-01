@@ -9,7 +9,7 @@ namespace Agrivi.Translations.Resources.Modules
 
 		public static string GetString(string key, CultureInfo cultureInfo = null) => typeof(General).GetString(key, cultureInfo);
 
-		public static TranslationBase _30days = new TranslationBase(_module, "_30days");
+		public static TranslationBase _30days2 = new TranslationBase(_module, "_30days2");
 		public static TranslationBase _7days = new TranslationBase(_module, "_7days");
     }
 }
