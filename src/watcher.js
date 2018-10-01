@@ -2,6 +2,7 @@ const fileSystem = require('fs');
 const md5 = require('md5');
 const errorHandler = require('./error-handler');
 const fileGenerator = require('./file-generator');
+const fileManager = require('./file-manager');
 
 /**
  * @name md5Cache
@@ -35,13 +36,21 @@ function initWatcher(config) {
  * @param {Object} config - config passed from yargs
  */
 function buildCache(config) {
-    fileSystem.readdir(config.source, (err, files) => {
+    var files= fileSystem.readdirSync(config.source);
+    if(files){
         files.forEach(filename => {
-            let content = fileSystem.readFileSync(`${config.source}/${filename}`, "utf8");
-            const fileMd5 = md5(content);
-            md5Cache[filename] = fileMd5;
+            try{
+                if(!fileSystem.lstatSync(`${config.source}/${filename}`).isDirectory()){
+                    let content = fileSystem.readFileSync(`${config.source}/${filename}`, "utf8");
+                    const fileMd5 = md5(content);
+                    md5Cache[filename] = fileMd5;
+                }
+            }
+            catch(error){
+                errorHandler.handleError(error);
+            }
         });
-    });
+    }
 }
 
 /**
