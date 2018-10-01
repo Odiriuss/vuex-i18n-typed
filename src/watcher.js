@@ -2,6 +2,7 @@ const fileSystem = require('fs');
 const md5 = require('md5');
 const errorHandler = require('./error-handler');
 const fileGenerator = require('./file-generator');
+const fileManager = require('./file-manager');
 
 /**
  * @name md5Cache
