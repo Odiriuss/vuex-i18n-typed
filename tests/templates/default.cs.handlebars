@@ -1,0 +1,18 @@
+using System.Globalization;
+using Agrivi.Translations.Helpers;
+
+namespace Agrivi.Translations.Resources.Modules 
+{
+	public static class {{className}} 
+	{
+        private const TranslationModule _module = TranslationModule.General;
+
+		public static string GetString(string key, CultureInfo cultureInfo = null) => typeof(General).GetString(key, cultureInfo);
+
+{{#each data}}
+{{#each .}}
+		public static TranslationBase {{@key}} = new TranslationBase(_module, "{{@key}}");
+{{/each}}
+{{/each}}
+    }
+}

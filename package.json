@@ -1,7 +1,7 @@
 {
   "name": "vuex-i18n-typed",
-  "version": "1.0.0",
-  "description": "Creates Typescript classes based on translation files",
+  "version": "1.1.0",
+  "description": "Creates output files based on input json files.",
   "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -9,8 +9,10 @@
   "author": "Tomislav Sulentic",
   "license": "ISC",
   "dependencies": {
+    "handlebars": "^4.0.12",
     "log-timestamp": "^0.2.1",
     "md5": "^2.2.1",
+    "node-json-transform": "^1.0.17",
     "yargs": "^12.0.2"
   }
 }

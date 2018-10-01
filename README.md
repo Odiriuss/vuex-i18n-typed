@@ -1,87 +1,134 @@
-# Project Title
+# vuex-i18n-typed
 
-One Paragraph of project description goes here
+Started as a way to get typed static wrappers around translation files for use with vuex i18n, but since it uses [handlebarsjs](http://handlebarsjs.com) and [node-json-transform](https://github.com/bozzltron/node-json-transform) under the hood it became much more.
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+Source code: [vuex-i18n-typed](https://github.com/Odiriuss/vuex-i18n-typed)
 
-### Prerequisites
+Download and install npm packages by running npm install in the root directory.
+Start by running the index.js file in the src folder.
 
-What things you need to install the software and how to install them
+## Prerequisites
 
-```
-Give examples
-```
+Node.js
 
-### Installing
+## Use
 
-A step by step series of examples that tell you how to get a development env running
+There are 2 commands available, emit and watch.
 
-Say what the step will be
-
-```
-Give the example
-```
-
-And repeat
+Emit will scan the source files from the provided source folder, scan the templates folder and the transforms folder (optional), if it finds any templates it will search for the transforms with the same extension and apply if any, finally it will emit the files to the destination folder or to the folders set by the extension destination flag. 
 
 ```
-until finished
+node index.js emit \..\tests\src_translations \..\tests\destination --templates \..\tests\templates --transforms \..\tests\transforms --lang en --classes cs ts --extension-destinations ts=\..\tests\destination\ts cs=\..\tests\destination\cs
 ```
 
-End with an example of getting some data out of the system or using it for a little demo
+For the following source:
 
-## Running the tests
-
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
+```json
+[
+    {
+      "Key": "_30days",
+      "Value": "30 days",
+      "LastModifiedUtcTime": "2018-09-27T06:36:51.4913332Z",
+      "Comment": ""
+    },
+    {
+      "Key": "_7days",
+      "Value": "7 days",
+      "LastModifiedUtcTime": "2018-09-27T06:36:51.4913332Z",
+      "Comment": ""
+    }
+]
 ```
 
-## Deployment
+With the following transform:
 
-Add additional notes about how to deploy this on a live system
+```javascript
+const map = {
+    list : 'translations',
+    item: {
+        Key: 'Key',
+        Value: 'Value'
+     },
+     each: function(item){
+        item[item.Key] = item.Value;
+        delete item['Key'];
+        delete item['Value'];
+
+        return item;
+    }
+};
+
+module.exports = { map };
+```
+
+And the following template:
+
+```
+import { Vue } from 'vue';
+
+export class {{className}} {
+{{#each data}}
+{{#each .}}
+    /** En translation: {{this}} */
+    get {{@key}}(): string {
+        return Vue.i18n.translate('{{@key}}', Vue.i18n.locale());
+    }
+{{/each}}
+{{/each}}
+}
+```
+
+Will output:
+
+```typescript
+import { Vue } from 'vue';
+
+export class General {
+    /** En translation: 30 days */
+    get _30days(): string {
+        return Vue.i18n.translate('_30days', Vue.i18n.locale());
+    }
+    /** En translation: 7 days */
+    get _7days(): string {
+        return Vue.i18n.translate('_7days', Vue.i18n.locale());
+    }
+}
+```
+
+Watch command emmits if a file from the source folder changes.
+
+```
+node index.js watch \..\tests\src_translations \..\tests\destination --templates \..\tests\templates --transforms \..\tests\transforms --lang en --classes cs ts --extension-destinations ts=\..\tests\destination\ts cs=\..\tests\destination\cs
+```
+
+## Options
+
+| Opiton        | Alias           | Optional | Type | Description  |
+| ------------- |:-------------:| -----:|-----:|-----:|
+| templates | t | no | string | Templates folder where the source files are located.
+| transforms | tf | yes | string | Transforms folder where files to be used for transforming source files are located. All files in the folder have to export a map object so that we can import them correctly.
+| extension-destinations | ed | yes | string array |Sets the destination for each extension.
+| classes | c | yes | string array | File extension array that contains extensions that should be rendered with class names. |
+| lang      | l | yes | string | Sets the language which will trigger the emit of the files defined in classes option. |
 
 ## Built With
 
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
+* [handlebarsjs](http://handlebarsjs.com/)
+* [node-log-timestamp](https://github.com/bahamas10/node-log-timestamp#readme)
+* [node-md5](https://github.com/pvorb/node-md5#readme)
+* [node-json-transform](https://github.com/bozzltron/node-json-transform)
+* [yargs](http://yargs.js.org/)
 
 ## Contributing
 
 Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
 
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
-
 ## Authors
 
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+* **[Odiriuss](https://github.com/Odiriuss)**
 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
-## Acknowledgments
-
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
