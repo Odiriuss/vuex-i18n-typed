@@ -27,23 +27,19 @@ require('yargs')
   }, (argv) => {
     configHelper.startWatching(argv);
   })
-  .option('log', {
-    default: '\\..\\logs',
-    describe: 'Sets the log folder location.'
-  })
   .option('lang', {
     alias: 'l',
     default: 'en',
-    describe: 'Sets the language which will trigger the emit of the .ts file.'
+    describe: 'Sets the language which will trigger the emit of the files defined in classes option.'
   })
   .option('templates', {
     alias: 't',
-    describe: 'Templates to be used for emitting source files.',
+    describe: 'Templates folder where the source files are located.',
     type: "string"
   })
   .option('transforms', {
     alias: 'tf',
-    describe: 'Transforms folder to be used for transforming source files.',
+    describe: 'Transforms folder where files to be used for transforming source files are located. All files in the folder have to export a map object so that we can import them correctly.',
     type: "string"
   })
   .option('classes', {
@@ -56,6 +52,7 @@ require('yargs')
     describe: 'Sets the destination for each extension.',
     type: "array"
   })
+  .demandOption('templates')
   .demandCommand(1)
   .help()
   .showHelpOnFail(false, 'Whoops, something went wrong! run with --help')

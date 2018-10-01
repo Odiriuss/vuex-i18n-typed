@@ -14,7 +14,9 @@ function logError(error, folder){
 
     let date = new Date(Date.now()).toLocaleDateString('de');
     var fileLocation = `${folder}\\log-${date}.txt`;
-    let content = fileSystem.readFileSync(fileLocation, "utf8");
+    let content = "";
+    if(fileSystem.existsSync(fileLocation)) content = fileSystem.readFileSync(fileLocation, "utf8");
+
     fileSystem.writeFileSync(fileLocation, content + utility.endOfLine + error.stack, function(err) {
        console.log(`Could not write log, reason: `);
        console.log(err); 

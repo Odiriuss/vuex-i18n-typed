@@ -1,4 +1,5 @@
-var dataTransform = require("node-json-transform").DataTransform;
+const dataTransform = require("node-json-transform").DataTransform;
+const utility = require("./utility");
 
 /**
  * Data transformer
@@ -33,7 +34,7 @@ function handleTransformations(config, fileExtension) {
     let emmitData = config.data;
 
     if (config.transforms) {
-        let extensionTransforms = config.transforms.filter(x => x.split('.')[1] == fileExtension);
+        let extensionTransforms = config.transforms.filter(x => utility.getExtension(x) == fileExtension);
         if (extensionTransforms) {
             extensionTransforms.forEach(function (transformPath) {
                 let modulePath = "." + transformPath.replace('\\', '/');

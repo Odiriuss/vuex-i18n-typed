@@ -25,6 +25,17 @@ function toTitleCase(str) {
 }
 
 /**
+ * Get template extension
+ * @name getTemplateExtension
+ * @description gets the template extension
+ * @param {string} str - source string
+ */
+function getExtension(str) {
+    let nameComponents = str.split('.');
+    return nameComponents[nameComponents.length - 2]
+}
+
+/**
  * Show help
  * @name showHelp
  * @description show help message and yargs help
@@ -37,6 +48,7 @@ function showHelp(message) {
 
 module.exports = {
     toTitleCase,
+    getExtension,
     showHelp,
     endOfLine,
     tab
