@@ -3,6 +3,8 @@ const md5 = require('md5');
 const errorHandler = require('./error-handler');
 const fileGenerator = require('./file-generator');
 const fileManager = require('./file-manager');
+var chokidar = require('chokidar');
+const fileSystemPath = require('path');
 
 /**
  * @name md5Cache
@@ -36,17 +38,16 @@ function initWatcher(config) {
  * @param {Object} config - config passed from yargs
  */
 function buildCache(config) {
-    var files= fileSystem.readdirSync(config.source);
-    if(files){
+    var files = fileSystem.readdirSync(config.source);
+    if (files) {
         files.forEach(filename => {
-            try{
-                if(!fileSystem.lstatSync(`${config.source}/${filename}`).isDirectory()){
+            try {
+                if (!fileSystem.lstatSync(`${config.source}/${filename}`).isDirectory()) {
                     let content = fileSystem.readFileSync(`${config.source}/${filename}`, "utf8");
                     const fileMd5 = md5(content);
                     md5Cache[filename] = fileMd5;
                 }
-            }
-            catch(error){
+            } catch (error) {
                 errorHandler.handleError(error);
             }
         });
@@ -61,14 +62,14 @@ function buildCache(config) {
  * @param {Object} config - config passed from yargs
  */
 function watchFiles(config) {
-    fileSystem.watch(config.source, (event, filename) => {
-        if (filename) {
-            if (fsWait) return;
-            fsWait = setTimeout(() => {
-                fsWait = false;
-            }, 100);
+    var watcher = chokidar.watch(config.source, {
+        persistent: true
+    });
 
-            let content = fileSystem.readFileSync(`${config.source}/${filename}`, "utf8");
+    watcher.on('change', (path, stats) => {
+        let filename = fileSystemPath.basename(path); 
+        let content = fileSystem.readFileSync(`${config.source}/${filename}`, "utf8");
+        if (content) {
             const fileMd5 = md5(content);
             if (fileMd5 === md5Cache[filename]) return;
 
