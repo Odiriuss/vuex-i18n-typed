@@ -23,7 +23,7 @@ Emit will scan the source files from the provided source folder, scan the templa
 node index.js emit \..\tests\src_translations \..\tests\destination --templates \..\tests\templates --transforms \..\tests\transforms --lang en --classes cs ts --extension-destinations ts=\..\tests\destination\ts cs=\..\tests\destination\cs
 ```
 
-For the following source:
+For the following source: general.en.json
 
 ```json
 [
@@ -42,7 +42,7 @@ For the following source:
 ]
 ```
 
-With the following transform:
+With the following transform: transform.ts.js -- ts sets the extension to apply the transform to
 
 ```javascript
 const map = {
@@ -63,16 +63,16 @@ const map = {
 module.exports = { map };
 ```
 
-And the following template:
+And the following template: template.ts.handlebars
 
 ```
-import { Vue } from 'vue';
+import Vue from 'vue';
 
 export class {{className}} {
 {{#each data}}
 {{#each .}}
     /** En translation: {{this}} */
-    get {{@key}}(): string {
+    get {{@key}}(): string | undefined {
         return Vue.i18n.translate('{{@key}}', Vue.i18n.locale());
     }
 {{/each}}
@@ -80,18 +80,18 @@ export class {{className}} {
 }
 ```
 
-Will output:
+Will output: General.ts
 
 ```typescript
-import { Vue } from 'vue';
+import Vue from 'vue';
 
 export class General {
     /** En translation: 30 days */
-    get _30days(): string {
+    get _30days(): string | undefined {
         return Vue.i18n.translate('_30days', Vue.i18n.locale());
     }
     /** En translation: 7 days */
-    get _7days(): string {
+    get _7days(): string | undefined {
         return Vue.i18n.translate('_7days', Vue.i18n.locale());
     }
 }
@@ -120,6 +120,7 @@ node index.js watch \..\tests\src_translations \..\tests\destination --templates
 * [node-md5](https://github.com/pvorb/node-md5#readme)
 * [node-json-transform](https://github.com/bozzltron/node-json-transform)
 * [yargs](http://yargs.js.org/)
+* [chokidar](https://github.com/paulmillr/chokidar)
 
 ## Contributing
 
