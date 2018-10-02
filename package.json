@@ -9,6 +9,7 @@
   "author": "Tomislav Sulentic",
   "license": "ISC",
   "dependencies": {
+    "chokidar": "^2.0.4",
     "handlebars": "^4.0.12",
     "log-timestamp": "^0.2.1",
     "md5": "^2.2.1",
