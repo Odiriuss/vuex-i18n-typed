@@ -65,11 +65,11 @@ function handleTemplate(destFilename, emmitData, isClassTemplate, fileExtension)
         };
         filename = `${className}.${fileExtension}`;
     } else {
-        let finalName = destFilename.includes(fileExtension) ?
-            destFilename : undefined;
-        if(!finalName){
-            let nameComponents = destFilename.split('.');
-            for(let i = 0; i < nameComponents.length - 2; i++){
+        let nameComponents = destFilename.split('.');
+        let finalName = destFilename;
+        if(nameComponents[nameComponents.length - 1] !== fileExtension){
+            finalName = "";
+            for(let i = 0; i < nameComponents.length - 1; i++){
                 finalName += `${nameComponents[i]}.`;
             }
 
