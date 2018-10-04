@@ -1,7 +1,9 @@
 const utility = require('./utility');
 const transformer = require('./file-transformer');
 const fs = require('fs');
-const handlebars = require('handlebars');;
+const handlebars = require('handlebars');
+var Q = require('q');
+
 
 /**
  * File generator
@@ -20,16 +22,18 @@ function generateFiles(config) {
         let nameComponents = templateLocation.split(".");
         //Last one is handlebars
         let fileExtension = nameComponents[nameComponents.length - 2];
-        let isClassTemplate = config.classes && config.classes.includes(fileExtension);
+        let isClassTemplate = templateLocation.includes('class');
 
         if (config.lang !== config.filename.split('.')[1] && isClassTemplate) return;
 
-        let templateSource = fs.readFileSync(`${templateLocation}`, "utf8");
-        let template = handlebars.compile(templateSource);
+        let templateSource = handleTemplateSource(fs.readFileSync(`${templateLocation}`, "utf8"));
+        let template = handlebars.compile(templateSource.templateData);
         let emmitData = transformer.handleTransformations(config, fileExtension);
 
         let templateHandler = handleTemplate(config.filename, emmitData, isClassTemplate, fileExtension);
-        let destination = config.extensionDestinations.find(x => x.extension === fileExtension);
+        let destination = templateSource.fileDestination ?
+            templateHandler.fileDestination :
+            config.extensionDestinations.find(x => x.extension === fileExtension);
         let result = {
             content: template(templateHandler.templateData),
             fileName: templateHandler.filename,
@@ -45,6 +49,25 @@ function generateFiles(config) {
 }
 
 /**
+ * Handles template source for destination path
+ * @name handleTemplateSource
+ * @description creates an object which sets the template data and file destination if any
+ * @param {string} templateData - template data
+ * @return pbject - {templateData: string, fileDestination: string}
+ */
+function handleTemplateSource(templateData){
+    let fileDestination;
+    let firstLine = templateData.split('\n')[0];
+    if (firstLine.includes('Destination')){
+        firstLine = firstLine.replace('/**','').replace('*/','').trim();
+        fileDestination = firstLine.split(':')[1].trim();
+        templateData = templateData.substring(templateData.indexOf("\n") + 1);
+    }
+
+    return {templateData, fileDestination};
+}
+
+/**
  * Handles template name and content assignment
  * @name handleTemplate
  * @description creates an object which sets the template data and filename
@@ -57,6 +80,7 @@ function generateFiles(config) {
 function handleTemplate(destFilename, emmitData, isClassTemplate, fileExtension) {
     let templateData = {};
     let filename = '';
+
     if (isClassTemplate) {
         let className = utility.toTitleCase(destFilename.split('.')[0]);
         templateData = {
