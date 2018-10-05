@@ -2,8 +2,6 @@ const utility = require('./utility');
 const transformer = require('./file-transformer');
 const fs = require('fs');
 const handlebars = require('handlebars');
-var Q = require('q');
-
 
 /**
  * File generator
@@ -27,7 +25,7 @@ function generateFiles(config) {
         if (config.lang !== config.filename.split('.')[1] && isClassTemplate) return;
 
         let templateSource = handleTemplateSource(fs.readFileSync(`${templateLocation}`, "utf8"));
-        let template = handlebars.compile(templateSource.templateData);
+        let template = handlebars.compile(templateSource.sourceData);
         let emmitData = transformer.handleTransformations(config, fileExtension);
 
         let templateHandler = handleTemplate(config.filename, emmitData, isClassTemplate, fileExtension);
@@ -52,19 +50,19 @@ function generateFiles(config) {
  * Handles template source for destination path
  * @name handleTemplateSource
  * @description creates an object which sets the template data and file destination if any
- * @param {string} templateData - template data
+ * @param {string} sourceData - source template data
  * @return pbject - {templateData: string, fileDestination: string}
  */
-function handleTemplateSource(templateData){
+function handleTemplateSource(sourceData){
     let fileDestination;
-    let firstLine = templateData.split('\n')[0];
+    let firstLine = sourceData.split('\n')[0];
     if (firstLine.includes('Destination')){
         firstLine = firstLine.replace('/**','').replace('*/','').trim();
         fileDestination = firstLine.split(':')[1].trim();
-        templateData = templateData.substring(templateData.indexOf("\n") + 1);
+        sourceData = sourceData.substring(sourceData.indexOf("\n") + 1);
     }
 
-    return {templateData, fileDestination};
+    return {sourceData, fileDestination};
 }
 
 /**
@@ -107,6 +105,36 @@ function handleTemplate(destFilename, emmitData, isClassTemplate, fileExtension)
     return {templateData, filename};
 }
 
+/**
+ * Cleanes soure file
+ * @name cleanSource
+ * @description creates an object from the cleanup up source json
+ * @param {string} content - loaded file content
+ * @param {string} path - path to save the file after cleanup
+ * @return array - of objects from json
+ */
+function cleanSource(content, path){
+    var result = [];
+    var data = JSON.parse(content);
+    for(var i = 0; i < data.length; i++){
+        var entry = data[i];
+        if(!result.find(x=> x.Key === entry.Key) && entry.Key && entry.Key !== ''){
+            if(entry.Value) entry.Value = entry.Value.replace(/(\r\n|\n|\r)/gm," ");
+            if(entry.Key) entry.Key = entry.Key.replace(/\s/g,'');
+            result.push(entry);
+        }
+    }
+
+    fs.writeFileSync(path, JSON.stringify(result, null, "\t"), function(err) {
+        if(err) {
+            return console.log(err);
+        }
+    });
+
+    return result;
+}
+
 module.exports = {
-    generateFiles
+    generateFiles,
+    cleanSource
 };

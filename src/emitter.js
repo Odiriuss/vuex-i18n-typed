@@ -24,7 +24,7 @@ function emmitFiles(config) {
 
         try {
           config.filename = filename;
-          config.data = JSON.parse(content);
+          config.data = fileGenerator.cleanSource(content, `${config.source}/${filename}`);
 
           let result = fileGenerator.generateFiles(config);
           fileManager.saveGeneratedFiles(result);
