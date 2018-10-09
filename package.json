@@ -1,6 +1,6 @@
 {
   "name": "vuex-i18n-typed",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Creates output files based on input json files.",
   "main": "src/index.js",
   "scripts": {
