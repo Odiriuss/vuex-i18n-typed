@@ -106,35 +106,19 @@ function handleTemplate(destFilename, emmitData, isClassTemplate, fileExtension)
 }
 
 /**
- * Cleanes soure file
- * @name cleanSource
- * @description creates an object from the cleanup up source json
- * @param {string} content - loaded file content
- * @param {string} path - path to save the file after cleanup
- * @return array - of objects from json
+ * Source cleanup handler
+ * @name handleSourceCleanup
+ * @description takes the cleanSource function from the module and applies it to the source data
+ * @return {string} - transformed data
  */
-function cleanSource(content, path){
-    var result = [];
-    var data = JSON.parse(content);
-    for(var i = 0; i < data.length; i++){
-        var entry = data[i];
-        if(!result.find(x=> x.Key === entry.Key) && entry.Key && entry.Key !== ''){
-            if(entry.Value) entry.Value = entry.Value.replace(/(\r\n|\n|\r)/gm," ");
-            if(entry.Key) entry.Key = entry.Key.replace(/\s/g,'');
-            result.push(entry);
-        }
-    }
+function handleSourceCleanup(content, path, destPath) {
+    let modulePath = "." + path.replace('\\', '/');
+    let clean = require(modulePath).cleanSource;
 
-    fs.writeFileSync(path, JSON.stringify(result, null, "\t"), function(err) {
-        if(err) {
-            return console.log(err);
-        }
-    });
-
-    return result;
+    return clean(content, destPath);
 }
 
 module.exports = {
     generateFiles,
-    cleanSource
+    handleSourceCleanup
 };

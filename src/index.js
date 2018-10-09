@@ -42,10 +42,10 @@ require('yargs')
     describe: 'Transforms folder where files to be used for transforming source files are located. All files in the folder have to export a map object so that we can import them correctly.',
     type: "string"
   })
-  .option('classes', {
+  .option('cleaner', {
     alias: 'c',
-    describe: 'File extension array that contains extensions that should be rendered with class names.',
-    type: "array"
+    describe: 'Path to clean module which will clean up the source code. Must export cleanSource function which accepts content as a string and returns a JSON object.',
+    type: "string"
   })
   .option('extension-destinations', {
     alias: 'ed',

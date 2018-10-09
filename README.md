@@ -17,10 +17,10 @@ Node.js
 
 There are 2 commands available, emit and watch.
 
-Emit will scan the source files from the provided source folder, scan the templates folder and the transforms folder (optional), if it finds any templates it will search for the transforms with the same extension and apply if any, finally it will emit the files to the destination folder or to the folders set by the extension destination flag. 
+Emit will scan the source files from the provided source folder, if cleaner flag set it will load the module in that path and apply the clean function, scan the templates folder and the transforms folder (optional), if it finds any templates it will search for the transforms with the same extension and apply if any, finally it will emit the files to the destination folder or to the folders set by the extension destination flag. 
 
 ```
-node index.js emit \..\tests\src_translations \..\tests\destination --templates \..\tests\templates --transforms \..\tests\transforms --lang en --classes cs ts --extension-destinations ts=\..\tests\destination\ts cs=\..\tests\destination\cs
+node index.js emit \..\tests\src_translations \..\tests\destination --templates \..\tests\templates --transforms \..\tests\transforms --lang en --extension-destinations ts=\..\tests\destination\ts cs=\..\tests\destination\cs
 ```
 
 For the following source: general.en.json
@@ -100,7 +100,7 @@ export class General {
 Watch command emmits if a file from the source folder changes.
 
 ```
-node index.js watch \..\tests\src_translations \..\tests\destination --templates \..\tests\templates --transforms \..\tests\transforms --lang en --classes cs ts --extension-destinations ts=\..\tests\destination\ts cs=\..\tests\destination\cs
+node index.js watch \..\tests\src_translations \..\tests\destination --templates \..\tests\templates --transforms \..\tests\transforms --lang en --extension-destinations ts=\..\tests\destination\ts cs=\..\tests\destination\cs
 ```
 
 ## Options
@@ -108,10 +108,15 @@ node index.js watch \..\tests\src_translations \..\tests\destination --templates
 | Opiton        | Alias           | Optional | Type | Description  |
 | ------------- |:-------------:| -----:|-----:|-----:|
 | templates | t | no | string | Templates folder where the source files are located.
+| cleaner | c | yes | string | Path to the cleaner module which is used to clean source files. Must export cleanSource function which accepts the content as a string and outputs a JSON object.
 | transforms | tf | yes | string | Transforms folder where files to be used for transforming source files are located. All files in the folder have to export a map object so that we can import them correctly.
 | extension-destinations | ed | yes | string array |Sets the destination for each extension.
-| classes | c | yes | string array | File extension array that contains extensions that should be rendered with class names. |
 | lang      | l | yes | string | Sets the language which will trigger the emit of the files defined in classes option. |
+
+You can define template extensions and output path in the template itself. Just add a commented JSON object to the first line of the template (which will be removed in the output), for example:
+/** { destination: '\..\tests\destination\templateDestination', extension: 'd.ts' } */
+
+If you don't want to generate an output for each of your source files you can tag the template as a class template, all you need to do is name the first part of your template class. For example: class.ts.handlebars. It will generate output only when the source file contains the language set in the lang flag, default for lang is en.
 
 ## Built With
 
