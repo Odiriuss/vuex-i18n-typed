@@ -21,13 +21,15 @@ function generateFiles(config) {
         if (config.lang !== config.filename.split('.')[1] && isClassTemplate) return;
 
         let nameComponents = templateLocation.split(".");
+        let fileExtension = nameComponents[nameComponents.length - 2];
+
         let templateSource = handleTemplateSource(fs.readFileSync(`${templateLocation}`, "utf8"));
         let template = handlebars.compile(templateSource.sourceData);
-        let fileExtension = templateSource.fileExtension ?
+        let emmitData = transformer.handleTransformations(config, fileExtension);
+        fileExtension = templateSource.fileExtension ?
             templateSource.fileExtension :
             //Last one is handlebars
             nameComponents[nameComponents.length - 2];
-        let emmitData = transformer.handleTransformations(config, fileExtension);
 
         let templateHandler = handleTemplate(config.filename, emmitData, isClassTemplate, fileExtension);
         let destination = templateSource.fileDestination ? {
