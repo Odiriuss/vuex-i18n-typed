@@ -17,27 +17,28 @@ function generateFiles(config) {
     let rendered = [];
 
     config.templates.forEach(templateLocation => {
-        let nameComponents = templateLocation.split(".");
-        //Last one is handlebars
-        let fileExtension = nameComponents[nameComponents.length - 2];
         let isClassTemplate = templateLocation.includes('class');
-
         if (config.lang !== config.filename.split('.')[1] && isClassTemplate) return;
 
+        let nameComponents = templateLocation.split(".");
         let templateSource = handleTemplateSource(fs.readFileSync(`${templateLocation}`, "utf8"));
         let template = handlebars.compile(templateSource.sourceData);
+        let fileExtension = templateSource.fileExtension ?
+            templateSource.fileExtension :
+            //Last one is handlebars
+            nameComponents[nameComponents.length - 2];
         let emmitData = transformer.handleTransformations(config, fileExtension);
 
         let templateHandler = handleTemplate(config.filename, emmitData, isClassTemplate, fileExtension);
-        let destination = templateSource.fileDestination ?
-            templateHandler.fileDestination :
+        let destination = templateSource.fileDestination ? {
+                path: __dirname + templateSource.fileDestination
+            } :
             config.extensionDestinations.find(x => x.extension === fileExtension);
         let result = {
             content: template(templateHandler.templateData),
             fileName: templateHandler.filename,
             folder: destination ? destination.path : config.destination,
-            fullPath: destination ? `${destination.path}\\${templateHandler.filename}` 
-                : `${config.destination}\\${templateHandler.filename}`
+            fullPath: destination ? `${destination.path}\\${templateHandler.filename}` : `${config.destination}\\${templateHandler.filename}`
         };
 
         rendered.push(result);
@@ -53,16 +54,25 @@ function generateFiles(config) {
  * @param {string} sourceData - source template data
  * @return pbject - {templateData: string, fileDestination: string}
  */
-function handleTemplateSource(sourceData){
+function handleTemplateSource(sourceData) {
     let fileDestination;
+    let fileExtension;
+
     let firstLine = sourceData.split('\n')[0];
-    if (firstLine.includes('Destination')){
-        firstLine = firstLine.replace('/**','').replace('*/','').trim();
-        fileDestination = firstLine.split(':')[1].trim();
+    if (firstLine.includes('destination') || firstLine.includes('extension')) {
+        firstLine = firstLine.replace('/**', '').replace('*/', '').trim();
+
+        let templateOptions = JSON.parse(firstLine);
+        fileDestination = templateOptions.destination;
+        fileExtension = templateOptions.extension;
         sourceData = sourceData.substring(sourceData.indexOf("\n") + 1);
     }
 
-    return {sourceData, fileDestination};
+    return {
+        sourceData,
+        fileDestination,
+        fileExtension
+    };
 }
 
 /**
@@ -89,20 +99,23 @@ function handleTemplate(destFilename, emmitData, isClassTemplate, fileExtension)
     } else {
         let nameComponents = destFilename.split('.');
         let finalName = destFilename;
-        if(nameComponents[nameComponents.length - 1] !== fileExtension){
+        if (nameComponents[nameComponents.length - 1] !== fileExtension) {
             finalName = "";
-            for(let i = 0; i < nameComponents.length - 1; i++){
+            for (let i = 0; i < nameComponents.length - 1; i++) {
                 finalName += `${nameComponents[i]}.`;
             }
 
             finalName += fileExtension;
         }
-        
+
         templateData = emmitData;
         filename = finalName;
     }
 
-    return {templateData, filename};
+    return {
+        templateData,
+        filename
+    };
 }
 
 /**

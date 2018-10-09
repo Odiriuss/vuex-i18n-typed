@@ -114,7 +114,19 @@ node index.js watch \..\tests\src_translations \..\tests\destination --templates
 | lang      | l | yes | string | Sets the language which will trigger the emit of the files defined in classes option. |
 
 You can define template extensions and output path in the template itself. Just add a commented JSON object to the first line of the template (which will be removed in the output), for example:
-/** { destination: '\..\tests\destination\templateDestination', extension: 'd.ts' } */
+
+/** { "destination": "\..\tests\destination\templateDestination", "extension": "d.ts" } */
+
+Destination that the template will be saved to is determined in this order (by priority descending):  
+
+1. config object in the first line of template with destination property
+2. extension destination flag is set for the template extension
+3. destination folder
+
+Output file extension is determined in this order (by priority descending):  
+
+1. config object in the first line of template with the extension property
+2. from template name, example: default.ts.handlebars (extension is .ts)
 
 If you don't want to generate an output for each of your source files you can tag the template as a class template, all you need to do is name the first part of your template class. For example: class.ts.handlebars. It will generate output only when the source file contains the language set in the lang flag, default for lang is en.
 
@@ -126,10 +138,6 @@ If you don't want to generate an output for each of your source files you can ta
 * [node-json-transform](https://github.com/bozzltron/node-json-transform)
 * [yargs](http://yargs.js.org/)
 * [chokidar](https://github.com/paulmillr/chokidar)
-
-## Contributing
-
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
 
 ## Authors
 
