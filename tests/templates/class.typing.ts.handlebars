@@ -1,0 +1,8 @@
+/** { "destination": "\\..\\..\\..\\Scripts\\vue\\src\\translations\\typings", "extension": "d.ts" } */
+declare interface Translations{{className}} {
+{{#each data}}
+{{#each .}}
+    {{@key}}: string;
+{{/each}}
+{{/each}}
+}
