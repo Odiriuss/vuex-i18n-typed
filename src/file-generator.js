@@ -15,10 +15,10 @@ const handlebars = require('handlebars');
  */
 function generateFiles(config) {
     let rendered = [];
-
     config.templates.forEach(templateLocation => {
         let isClassTemplate = templateLocation.includes('class');
-        if (config.lang !== config.filename.split('.')[1] && isClassTemplate) return;
+        let filenameParts = config.filename.split('.');
+        if (config.lang !== filenameParts[filenameParts.length - 2] && isClassTemplate) return;
 
         let nameComponents = templateLocation.split(".");
         let fileExtension = nameComponents[nameComponents.length - 2];
