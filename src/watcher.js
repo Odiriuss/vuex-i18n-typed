@@ -67,7 +67,7 @@ function watchFiles(config) {
     });
 
     watcher.on('change', (path, stats) => {
-        let filename = fileSystemPath.basename(path); 
+        let filename = fileSystemPath.basename(path);
         let content = fileSystem.readFileSync(`${config.source}/${filename}`, "utf8");
         if (content) {
             const fileMd5 = md5(content);
@@ -78,7 +78,11 @@ function watchFiles(config) {
 
             try {
                 config.filename = filename;
-                config.data = JSON.parse(content);
+                
+                if (config.cleaner)
+                    config.data = fileGenerator.handleSourceCleanup(content, config.cleaner, `${config.source}/${filename}`);
+                else
+                    config.data = JSON.parse(content);
 
                 let result = fileGenerator.generateFiles(config);
                 fileManager.saveGeneratedFiles(result);
