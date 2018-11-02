@@ -15,6 +15,14 @@ const handlebars = require('handlebars');
  */
 function generateFiles(config) {
     let rendered = [];
+    
+    handlebars.registerHelper('encodeMyString',function(inputData){
+        if(inputData)
+            inputData = inputData.toString().replace('\"","\'');
+            
+        return new handlebars.SafeString(inputData);
+    });
+
     config.templates.forEach(templateLocation => {
         let isClassTemplate = templateLocation.includes('class');
         let filenameParts = config.filename.split('.');
