@@ -28,6 +28,8 @@ function generateFiles(config) {
         let filenameParts = config.filename.split('.');
         if (config.lang !== filenameParts[filenameParts.length - 2] && isClassTemplate) return;
 
+        console.log(filenameParts);
+
         let nameComponents = templateLocation.split(".");
         let fileExtension = nameComponents[nameComponents.length - 2];
 
@@ -38,6 +40,9 @@ function generateFiles(config) {
             templateSource.fileExtension :
             //Last one is handlebars
             nameComponents[nameComponents.length - 2];
+
+        if(config.filename.includes('permissions'))
+            config.filename = config.filename.replace('permissions', 'PermissionsTranslations');
 
         let templateHandler = handleTemplate(config.filename, emmitData, isClassTemplate, fileExtension);
         let destination = templateSource.fileDestination ? {
@@ -100,7 +105,8 @@ function handleTemplate(destFilename, emmitData, isClassTemplate, fileExtension)
     let filename = '';
 
     if (isClassTemplate) {
-        let className = utility.toTitleCase(destFilename.split('.')[0]);
+        var newFileName = destFilename.split('.')[0];
+        let className = destFilename.includes('PermissionsTranslations') ? newFileName : utility.toTitleCase(newFileName);
         templateData = {
             data: emmitData,
             className: className
