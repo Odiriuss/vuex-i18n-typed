@@ -107,9 +107,12 @@ function handleTemplate(destFilename, emmitData, isClassTemplate, fileExtension)
     if (isClassTemplate) {
         var newFileName = destFilename.split('.')[0];
         let className = destFilename.includes('PermissionsTranslations') ? newFileName : utility.toTitleCase(newFileName);
+        //Permissions
+        let enumName = className.includes('PermissionsTranslations') ? 'Permissions' : className;
         templateData = {
             data: emmitData,
-            className: className
+            className: className,
+            enumName: enumName
         };
         filename = `${className}.${fileExtension}`;
     } else {
